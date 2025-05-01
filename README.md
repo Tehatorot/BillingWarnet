@@ -1,8 +1,8 @@
-Brando Cerah NET
+**Brando Cerah NET**
 
 Brando Cerah NET adalah sebuah aplikasi billing warnet berbasis desktop yang dibangun menggunakan C# dan Windows Forms, serta terintegrasi dengan MySQL (XAMPP) sebagai basis datanya. Aplikasi ini memiliki dua jenis pengguna: admin dan user, masing-masing dengan antarmuka (Form) dan fungsi yang berbeda.
 
----
+
 
 🎯 Fitur Utama
 
@@ -11,6 +11,7 @@ Brando Cerah NET adalah sebuah aplikasi billing warnet berbasis desktop yang dib
 - Menambahkan akun user melalui form registrasi.
 - Melihat dan mengelola data pelanggan (fitur manajemen lanjutan bisa dikembangkan).
 - Antarmuka sederhana untuk pengelolaan akun warnet.
+
 
 👨‍💻 User (Form3)
 - Login dengan ID dan password yang telah didaftarkan.
@@ -52,7 +53,7 @@ Brando Cerah NET adalah sebuah aplikasi billing warnet berbasis desktop yang dib
      ```
 
 2. Buka Project di Visual Studio
-   - Pastikan Anda sudah mengatur reference `MySql.Data`.
+   - Pastikan sudah mengatur reference `MySql.Data`.
    - Buka `Form1.cs`, `Form2.cs`, dan `Form3.cs` untuk melihat atau menyesuaikan logika.
    - Jalankan program dengan `Start` (F5).
 
