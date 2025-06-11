@@ -13,8 +13,6 @@ namespace BillingWarnet
 {
     public partial class Form2 : Form
     {
-        string connStr = "server=localhost;user=root;password=;database=warnet_db;";
-
         public Form2()
         {
             InitializeComponent();
@@ -27,120 +25,88 @@ namespace BillingWarnet
 
         private void LoadData()
         {
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            DataTable dt = DatabaseHelper.GetAllUsers();
+            if (dt != null)
             {
-                try
-                {
-                    conn.Open();
-                    string query = "SELECT * FROM pelanggan";
-                    MySqlDataAdapter adapter = new MySqlDataAdapter(query, conn);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    dataGridView1.DataSource = dt;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Gagal load data: " + ex.Message);
-                }
+                dataGridView1.DataSource = dt;
             }
         }
 
         private void btnTambah_Click(object sender, EventArgs e)
         {
-            string nama = txtNama.Text.Trim();
+            string idUser = txtNama.Text.Trim();
             if (!int.TryParse(txtDurasi.Text.Trim(), out int durasi))
             {
                 MessageBox.Show("Durasi harus berupa angka.");
                 return;
             }
 
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            if (string.IsNullOrEmpty(idUser))
             {
-                try
-                {
-                    conn.Open();
-                    string query = "INSERT INTO pelanggan (nama, durasi) VALUES (@nama, @durasi)";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@nama", nama);
-                    cmd.Parameters.AddWithValue("@durasi", durasi);
-                    cmd.ExecuteNonQuery();
+                MessageBox.Show("Nama user tidak boleh kosong.");
+                return;
+            }
 
-                    MessageBox.Show("Data berhasil ditambahkan.");
-                    LoadData();
-                    ClearFields();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Gagal tambah data: " + ex.Message);
-                }
+            if (DatabaseHelper.IsUserExist(idUser))
+            {
+                MessageBox.Show("User sudah ada. Gunakan ID lain.");
+                return;
+            }
+
+            if (DatabaseHelper.RegisterUser(idUser, "123456"))
+            {
+                DatabaseHelper.UpdateDurasiUser(idUser, durasi);
+                MessageBox.Show("User berhasil ditambahkan dengan password default '123456'");
+                LoadData();
+                ClearFields();
+            }
+            else
+            {
+                MessageBox.Show("Gagal menambahkan user.");
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.CurrentRow == null)
-                return;
+            if (dataGridView1.CurrentRow == null) return;
 
-            int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["id"].Value);
-            string nama = txtNama.Text.Trim();
+            string idUser = dataGridView1.CurrentRow.Cells["nama"].Value.ToString();
             if (!int.TryParse(txtDurasi.Text.Trim(), out int durasi))
             {
                 MessageBox.Show("Durasi harus berupa angka.");
                 return;
             }
 
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            if (DatabaseHelper.UpdateUserDurasi(idUser, durasi))
             {
-                try
-                {
-                    conn.Open();
-                    string query = "UPDATE pelanggan SET nama=@nama, durasi=@durasi WHERE id=@id";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@nama", nama);
-                    cmd.Parameters.AddWithValue("@durasi", durasi);
-                    cmd.ExecuteNonQuery();
-
-                    MessageBox.Show("Data berhasil diupdate.");
-                    LoadData();
-                    ClearFields();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Gagal update data: " + ex.Message);
-                }
+                MessageBox.Show("Durasi user berhasil diupdate.");
+                LoadData();
+                ClearFields();
+            }
+            else
+            {
+                MessageBox.Show("Gagal update durasi user.");
             }
         }
 
         private void btnHapus_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.CurrentRow == null)
-                return;
+            if (dataGridView1.CurrentRow == null) return;
 
-            int id = Convert.ToInt32(dataGridView1.CurrentRow.Cells["id"].Value);
+            string idUser = dataGridView1.CurrentRow.Cells["nama"].Value.ToString();
 
-            DialogResult result = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-                return;
+            DialogResult result = MessageBox.Show($"Yakin ingin menghapus user '{idUser}'?", "Konfirmasi", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No) return;
 
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            if (DatabaseHelper.DeleteUser(idUser))
             {
-                try
-                {
-                    conn.Open();
-                    string query = "DELETE FROM pelanggan WHERE id=@id";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
-
-                    MessageBox.Show("Data berhasil dihapus.");
-                    LoadData();
-                    ClearFields();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Gagal hapus data: " + ex.Message);
-                }
+                MessageBox.Show("User berhasil dihapus.");
+                LoadData();
+                ClearFields();
+            }
+            else
+            {
+                MessageBox.Show("Gagal menghapus user.");
             }
         }
 
@@ -151,8 +117,8 @@ namespace BillingWarnet
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
-            this.Close(); // Tutup Form2
-            Application.OpenForms["Form1"]?.Show(); // Tampilkan kembali Form1
+            this.Close();
+            Application.OpenForms["Form1"]?.Show();
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)

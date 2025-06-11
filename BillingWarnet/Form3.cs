@@ -12,20 +12,21 @@ namespace BillingWarnet
 {
     public partial class Form3 : Form
     {
-        private int sisaDetik;
         private string namaUser;
+        private string idUser;
+        private DateTime waktuBerakhir;
 
-        public Form3(string nama, int durasiMenit)
+        public Form3(string id, int durasiMenit)
         {
             InitializeComponent();
-            namaUser = nama;
-            sisaDetik = durasiMenit * 60; // Konversi dari menit ke detik
+            idUser = id;
+            namaUser = id;
+            waktuBerakhir = DateTime.Now.AddMinutes(durasiMenit);
         }
 
         private void Form3_Load(object sender, EventArgs e)
         {
             lblNama.Text = "Selamat datang, " + namaUser;
-            UpdateLabelDurasi();
 
             timer1.Interval = 1000;
             timer1.Tick += timer1_Tick;
@@ -34,15 +35,21 @@ namespace BillingWarnet
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (sisaDetik > 0)
+            TimeSpan sisa = waktuBerakhir - DateTime.Now;
+
+            if (sisa.TotalSeconds > 0)
             {
-                sisaDetik--;
-                UpdateLabelDurasi();
+                lblDurasi.Text = "Sisa waktu: " + sisa.ToString(@"hh\:mm\:ss");
             }
             else
             {
                 timer1.Stop();
+                lblDurasi.Text = "Sisa waktu: 00:00:00";
                 MessageBox.Show("Waktu habis. Terima kasih telah menggunakan layanan kami.");
+
+                // Simpan durasi tersisa 0 ke database
+                DatabaseHelper.UpdateDurasiUser(idUser, 0);
+
                 this.Close();
                 Application.OpenForms["Form1"]?.Show();
             }
@@ -51,15 +58,19 @@ namespace BillingWarnet
         private void btnSelesai_Click(object sender, EventArgs e)
         {
             timer1.Stop();
+            TimeSpan sisa = waktuBerakhir - DateTime.Now;
+
+            int sisaMenit = Math.Max((int)sisa.TotalMinutes, 0);
+
+            // Simpan sisa durasi ke database
+            DatabaseHelper.UpdateDurasiUser(idUser, sisaMenit);
+
             MessageBox.Show("Sesi dihentikan. Terima kasih.");
             this.Close();
             Application.OpenForms["Form1"]?.Show();
         }
 
-        private void UpdateLabelDurasi()
-        {
-            TimeSpan ts = TimeSpan.FromSeconds(sisaDetik);
-            lblDurasi.Text = "Sisa waktu: " + ts.ToString(@"hh\:mm\:ss");
-        }
+        // Tambahan untuk hilangkan error designer
+        private void lblNama_Click(object sender, EventArgs e) { }
     }
 }

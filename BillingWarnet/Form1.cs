@@ -13,22 +13,9 @@ namespace BillingWarnet
 {
     public partial class Form1 : Form
     {
-        // Koneksi database XAMPP (MySQL)
-        string connStr = "server=localhost;port=3306;user=root;password=;database=warnet_db;";
-
         public Form1()
         {
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click_1(object sender, EventArgs e)
-        {
-
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -42,49 +29,31 @@ namespace BillingWarnet
                 return;
             }
 
-            using (MySqlConnection conn = new MySqlConnection(connStr))
+            var result = DatabaseHelper.Login(id, pw);
+            if (result != null)
             {
-                try
+                var (role, durasi) = result.Value;
+
+                DatabaseHelper.LogLogin(id);
+
+                if (role == "admin")
                 {
-                    conn.Open();
-
-                    string query = "SELECT durasi, role FROM users WHERE id_user = @id AND password = @pw";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.Parameters.AddWithValue("@pw", pw);
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            string role = reader.GetString("role");
-                            int durasi = reader.GetInt32("durasi");
-
-                            if (role == "admin")
-                            {
-                                MessageBox.Show("Login admin berhasil!");
-                                Form2 formAdmin = new Form2();
-                                formAdmin.Show();
-                                this.Hide();
-                            }
-                            else if (role == "user")
-                            {
-                                MessageBox.Show("Login user berhasil!");
-                                Form3 formUser = new Form3(id, durasi); // kirim nama & durasi
-                                formUser.Show();
-                                this.Hide();
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("ID atau Password salah.");
-                        }
-                    }
+                    MessageBox.Show("Login admin berhasil!");
+                    Form2 formAdmin = new Form2();
+                    formAdmin.Show();
+                    this.Hide();
                 }
-                catch (Exception ex)
+                else if (role == "user")
                 {
-                    MessageBox.Show("Koneksi ke database gagal:\n" + ex.Message);
+                    MessageBox.Show("Login user berhasil!");
+                    Form3 formUser = new Form3(id, durasi);
+                    formUser.Show();
+                    this.Hide();
                 }
+            }
+            else
+            {
+                MessageBox.Show("ID atau Password salah.");
             }
         }
 
@@ -94,9 +63,10 @@ namespace BillingWarnet
             regForm.Show();
         }
 
-        private void txtID_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+        // Tambahan untuk hilangkan error designer
+        private void txtID_TextChanged(object sender, EventArgs e) { }
+        private void label2_Click(object sender, EventArgs e) { }
+        private void pictureBox1_Click_1(object sender, EventArgs e) { }
+        private void Form1_Load(object sender, EventArgs e) { }
     }
 }

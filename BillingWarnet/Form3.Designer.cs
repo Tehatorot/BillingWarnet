@@ -33,6 +33,7 @@
             this.lblNama.Size = new System.Drawing.Size(106, 23);
             this.lblNama.TabIndex = 0;
             this.lblNama.Text = "Welcome,";
+            this.lblNama.Click += new System.EventHandler(this.lblNama_Click);
             // 
             // lblDurasi
             // 
@@ -40,9 +41,8 @@
             this.lblDurasi.Font = new System.Drawing.Font("OCR A Extended", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDurasi.Location = new System.Drawing.Point(36, 108);
             this.lblDurasi.Name = "lblDurasi";
-            this.lblDurasi.Size = new System.Drawing.Size(200, 23);
+            this.lblDurasi.Size = new System.Drawing.Size(0, 23);
             this.lblDurasi.TabIndex = 1;
-            this.lblDurasi.Text = ""; // Atur teks awal kosong
             // 
             // btnSelesai
             // 
@@ -68,6 +68,7 @@
             this.Load += new System.EventHandler(this.Form3_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
