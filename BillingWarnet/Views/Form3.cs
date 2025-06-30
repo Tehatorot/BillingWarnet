@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BillingWarnet.Controllers;
 
-namespace BillingWarnet
+namespace BillingWarnet.Views
 {
     public partial class Form3 : Form
     {
@@ -47,8 +48,7 @@ namespace BillingWarnet
                 lblDurasi.Text = "Sisa waktu: 00:00:00";
                 MessageBox.Show("Waktu habis. Terima kasih telah menggunakan layanan kami.");
 
-                // Simpan durasi tersisa 0 ke database
-                DatabaseHelper.UpdateDurasiUser(idUser, 0);
+                UserController.UpdateDurasiLangsung(idUser, 0);
 
                 this.Close();
                 Application.OpenForms["Form1"]?.Show();
@@ -62,15 +62,13 @@ namespace BillingWarnet
 
             int sisaMenit = Math.Max((int)sisa.TotalMinutes, 0);
 
-            // Simpan sisa durasi ke database
-            DatabaseHelper.UpdateDurasiUser(idUser, sisaMenit);
+            UserController.UpdateDurasiLangsung(idUser, sisaMenit);
 
             MessageBox.Show("Sesi dihentikan. Terima kasih.");
             this.Close();
             Application.OpenForms["Form1"]?.Show();
         }
 
-        // Tambahan untuk hilangkan error designer
         private void lblNama_Click(object sender, EventArgs e) { }
     }
 }

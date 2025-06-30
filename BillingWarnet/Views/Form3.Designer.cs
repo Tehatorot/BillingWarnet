@@ -1,4 +1,4 @@
-﻿namespace BillingWarnet
+﻿namespace BillingWarnet.Views
 {
     partial class Form3
     {

@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using BillingWarnet.Controllers;
 
-namespace BillingWarnet
+namespace BillingWarnet.Views
 {
     public partial class Form1 : Form
     {
@@ -29,12 +30,11 @@ namespace BillingWarnet
                 return;
             }
 
-            var result = DatabaseHelper.Login(id, pw);
+            var result = AuthController.Login(id, pw);
             if (result != null)
             {
                 var (role, durasi) = result.Value;
-
-                DatabaseHelper.LogLogin(id);
+                AuthController.LogLogin(id);
 
                 if (role == "admin")
                 {
@@ -63,7 +63,6 @@ namespace BillingWarnet
             regForm.Show();
         }
 
-        // Tambahan untuk hilangkan error designer
         private void txtID_TextChanged(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
         private void pictureBox1_Click_1(object sender, EventArgs e) { }

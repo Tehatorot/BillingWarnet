@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using BillingWarnet.Controllers;
 
-namespace BillingWarnet
+namespace BillingWarnet.Views
 {
     public partial class FormRegister : Form
     {
@@ -29,21 +30,15 @@ namespace BillingWarnet
                 return;
             }
 
-            if (DatabaseHelper.IsUserExist(id))
+            if (!AuthController.Register(id, pw))
             {
-                MessageBox.Show("ID sudah digunakan. Gunakan ID lain.");
+                MessageBox.Show("ID sudah digunakan atau registrasi gagal.");
                 return;
             }
 
-            if (DatabaseHelper.RegisterUser(id, pw))
-            {
-                MessageBox.Show("Registrasi berhasil! Silakan login.");
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Registrasi gagal. Coba lagi.");
-            }
+            MessageBox.Show("Registrasi berhasil! Silakan login.");
+            this.Close();
+
         }
     }
 }

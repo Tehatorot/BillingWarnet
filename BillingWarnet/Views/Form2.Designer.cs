@@ -1,5 +1,5 @@
 ﻿
-namespace BillingWarnet
+namespace BillingWarnet.Views
 {
     partial class Form2
     {
@@ -52,6 +52,7 @@ namespace BillingWarnet
             this.label1.Size = new System.Drawing.Size(221, 45);
             this.label1.TabIndex = 0;
             this.label1.Text = "Admin mode";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // dataGridView1
             // 

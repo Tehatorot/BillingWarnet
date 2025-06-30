@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using BillingWarnet.Controllers;
 
-namespace BillingWarnet
+namespace BillingWarnet.Views
 {
     public partial class Form2 : Form
     {
@@ -25,7 +26,7 @@ namespace BillingWarnet
 
         private void LoadData()
         {
-            DataTable dt = DatabaseHelper.GetAllUsers();
+            DataTable dt = UserController.GetAllUsers();
             if (dt != null)
             {
                 dataGridView1.DataSource = dt;
@@ -47,15 +48,14 @@ namespace BillingWarnet
                 return;
             }
 
-            if (DatabaseHelper.IsUserExist(idUser))
+            if (AuthController.IsUserExist(idUser))
             {
                 MessageBox.Show("User sudah ada. Gunakan ID lain.");
                 return;
             }
 
-            if (DatabaseHelper.RegisterUser(idUser, "123456"))
+            if (UserController.AddUser(idUser, durasi))
             {
-                DatabaseHelper.UpdateDurasiUser(idUser, durasi);
                 MessageBox.Show("User berhasil ditambahkan dengan password default '123456'");
                 LoadData();
                 ClearFields();
@@ -77,7 +77,7 @@ namespace BillingWarnet
                 return;
             }
 
-            if (DatabaseHelper.UpdateUserDurasi(idUser, durasi))
+            if (UserController.UpdateDurasi(idUser, durasi))
             {
                 MessageBox.Show("Durasi user berhasil diupdate.");
                 LoadData();
@@ -98,7 +98,7 @@ namespace BillingWarnet
             DialogResult result = MessageBox.Show($"Yakin ingin menghapus user '{idUser}'?", "Konfirmasi", MessageBoxButtons.YesNo);
             if (result == DialogResult.No) return;
 
-            if (DatabaseHelper.DeleteUser(idUser))
+            if (UserController.DeleteUser(idUser))
             {
                 MessageBox.Show("User berhasil dihapus.");
                 LoadData();
@@ -134,6 +134,11 @@ namespace BillingWarnet
         {
             txtNama.Clear();
             txtDurasi.Clear();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            // Kosong (default event handler)
         }
     }
 }

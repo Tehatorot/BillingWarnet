@@ -3,7 +3,8 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using System.Windows.Forms;
 
-namespace BillingWarnet
+namespace BillingWarnet.Helpers
+
 {
     public static class DatabaseHelper
     {
